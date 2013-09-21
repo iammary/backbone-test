@@ -2,7 +2,6 @@
 
 	$('#add_contact').tooltip();
 
-	//var count = 0;
 	var editContact;
 
 	var App = Backbone.View.extend({
@@ -53,23 +52,14 @@
 			var deleteContact = this.collection.findWhere({num: pos});
 			deleteContact.destroy();
 			$(evt.target).parents('tr').remove();
-			//alert("pos: " + pos + " length: " + this.collection.models.length);
 			while(pos<=this.collection.models.length) {
 				var backpos = pos - 1;
-				var backpos1 = pos - 2;
-				//alert(JSON.stringify(this.collection.at(backpos)));
 				this.collection.at(backpos).set({num: pos});
-				alert(JSON.stringify(this.collection.at(backpos)));
-				//var strquery = 
-				//var test = backpos-1;
 				$(".table tr:nth-child("+backpos+") td").first().text(pos-1);
-				//alert(JSON.stringify(this.collection.at(backpos)));
 				pos++;
 			}
 			var test = pos -1;
 			$(".table tr:nth-child("+test+") td").first().text(pos-1);
-			//alert(this.collection.models.length);
-			
 			
 		},
 
@@ -79,7 +69,6 @@
 			} 
 				position = parseInt($(evt.target).parents('tr').find('.position').text());
 				editContact = this.collection.findWhere({num: position});
-				//position = pos;
 				var view = new editedPersonView({model: editContact});
 				$(evt.target).parents('tr').replaceWith(view.render().el);
 				$('.confirmation').parents('tr').attr('id','editing');
