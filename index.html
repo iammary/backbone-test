@@ -74,6 +74,12 @@
             .cancel {
                 color: gray;
             }
+            #editing {
+                background: #ddd;
+            }
+            .focus {
+                border: 2px solid red;
+            }
         </style>
     </head>
     <body>
@@ -103,7 +109,7 @@
         </div>
     </body>
     <script type="text/template" id="contact_template">
-        <td><%= position %></td>
+        <td class="position"><%= position %></td>
         <td><%= name %></td>
         <td><%= number %></td>
         <td><%= username %></td>

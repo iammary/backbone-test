@@ -11,19 +11,22 @@ db.once('open', function callback() {
 });
 
 
-var allowCrossDomain = function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+// Setup CORS related headers
+var corsSettings = function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'origin, content-type, accept');
+  // deal with OPTIONS method during a preflight request
+  if (req.method === 'OPTIONS') {
+    res.send(200);
+  } else {
+    next();
+  }
+}
 
-    // intercept OPTIONS method
-    if ('OPTIONS' == req.method) {
-      res.send(200);
-    }
-    else {
-      next();
-    }
-};
+app.use(express.bodyParser());
+app.use(corsSettings);
+//app.use(express.static(__dirname));
 
 // User Schema
 var userSchema = mongoose.Schema({
@@ -34,16 +37,10 @@ var userSchema = mongoose.Schema({
   
 var User  = mongoose.model('User', userSchema);
 
-app.configure(function () {
-  app.use(allowCrossDomain);
-  app.use(express.bodyParser());
- });
-
-
 app.get('/contacts', listContacts);
 app.post('/contacts', createContact);
-// app.put('http://localhost:9090/:id', updateContact);
-// app.delete('http://localhost:9090/:id', deleteContact);
+app.delete('/contacts/:id', deleteContactById);
+app.put('/contacts/:id', updateContactById);
 
 function listContacts(req, res) {
   var options = {};
@@ -68,6 +65,35 @@ function createContact(req, res) {
     if (err) {
       console.log(err);
       res.send(500, err);
+    } else {
+      res.send(200, doc);
+    }
+  });
+}
+
+function deleteContactById(req, res) {
+  var id = req.params.id;
+  User.findByIdAndRemove(id, function (err, doc) {
+    if (err) {
+      console.log(err);
+      res.send(404, err);
+    } else {
+      res.send(200, doc);
+    }
+  })
+}
+
+function updateContactById(req, res) {
+  var id = req.params.id;
+  var newData = {
+    name: req.body.name,
+    number: req.body.number,
+    username: req.body.username
+  };
+  User.findByIdAndUpdate(id, newData, function (err, doc) {
+    if (err) {
+      console.log(err);
+      res.send(404, err);
     } else {
       res.send(200, doc);
     }
