@@ -4,8 +4,6 @@
 
 * Can fetch data from database on reload
 * Can add new contact to database
-
-### On-going Development
-
-* Edit Contact
-* Delete Contact
+* Can update Contact item
+* Can delete item from Contact List
+* Performs validation on username during add and update
