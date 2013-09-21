@@ -53,11 +53,27 @@
 			var deleteContact = this.collection.findWhere({num: pos});
 			deleteContact.destroy();
 			$(evt.target).parents('tr').remove();
+			//alert("pos: " + pos + " length: " + this.collection.models.length);
+			while(pos<=this.collection.models.length) {
+				var backpos = pos - 1;
+				var backpos1 = pos - 2;
+				//alert(JSON.stringify(this.collection.at(backpos)));
+				this.collection.at(backpos).set({num: pos});
+				alert(JSON.stringify(this.collection.at(backpos)));
+				//var strquery = 
+				//var test = backpos-1;
+				$(".table tr:nth-child("+backpos+") td").first().text(pos-1);
+				//alert(JSON.stringify(this.collection.at(backpos)));
+				pos++;
+			}
+			var test = pos -1;
+			$(".table tr:nth-child("+test+") td").first().text(pos-1);
+			//alert(this.collection.models.length);
+			
 			
 		},
 
 		editPerson: function(evt) {
-			//checkCurrentEditState();
 			if($('#editing').length > 0 ) {
 				$( ".cancel" ).trigger( "click" );
 			} 
@@ -74,10 +90,11 @@
 			var newname = $(evt.target).parents('tr').find('input[name=fullname]').val();
 			var newnum = $(evt.target).parents('tr').find('input[name=number]').val();
 			var newusername = $(evt.target).parents('tr').find('input[name=username]');
-			if (this.collection.where({username: newusername.val()}).length) {
+			if (this.collection.where({username: newusername.val()}).length && (editContact.get('username')!=newusername.val())) {
 				alert('Username already in use!');
 				newusername.val('');
 				newusername.addClass('focus');
+				newusername.focus();
 			} else {
 				editContact.set({
 					name: newname,
@@ -98,6 +115,7 @@
 
 	function clearField(fields) {
 		fields.val('');
+		$('.focus').removeClass();
 	}
 
 	var PersonModel = Backbone.Model.extend({
@@ -114,6 +132,7 @@
 
 	var PersonCollection = Backbone.Collection.extend({
 		model: PersonModel,
+		comparator: 'num',
 		url: 'http://localhost:9090/contacts',
 		initialize: function () {
 			  
